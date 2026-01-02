@@ -6,6 +6,11 @@ import asyncio
 from datetime import datetime, timedelta
 import pandas as pd
 import time
+import sys
+import os
+
+# Add current directory to sys.path to fix ModuleNotFoundError on Render
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 # Import local modules
 from smart_api_client import SmartApiClient
