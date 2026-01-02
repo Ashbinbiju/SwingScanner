@@ -28,7 +28,7 @@ type RejectedTrade = {
 };
 
 type LogMessage = {
-  type: 'status' | 'progress' | 'match_found' | 'error' | 'complete';
+  type: 'status' | 'progress' | 'match_found' | 'error' | 'complete' | 'match_rejected';
   message?: string;
   value?: number;
   current_symbol?: string;
