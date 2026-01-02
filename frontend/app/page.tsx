@@ -147,6 +147,10 @@ export default function Dashboard() {
         setValidTrades(prev => [...prev, msg.data!]);
         setLogs(prev => [...prev, `[MATCH] Found ${msg.data!.symbol}`]);
       }
+    } else if (msg.type === 'match_rejected') {
+      setRejectedTrades(prev => [...prev, { symbol: msg.current_symbol || 'Unknown', reason: msg.message || 'Rejected' }]);
+      // Optional: Log rejection? to avoid clutter, maybe not. Or verbose mode.
+      // setLogs(prev => [...prev, `[REJECT] ${msg.message}`]); 
     } else if (msg.type === 'error') {
       setLogs(prev => [...prev, `[ERROR] ${msg.message}`]);
     } else if (msg.type === 'complete') {
