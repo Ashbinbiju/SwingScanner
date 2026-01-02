@@ -17,6 +17,7 @@ type Trade = {
   ema_20: number;
   spread_pct?: number;
   is_mtf?: boolean;
+  is_fno?: boolean;
   is_stage2?: boolean;
   note?: string;
 };
@@ -331,6 +332,7 @@ export default function Dashboard() {
                               </div>
                               <div className="flex items-center gap-2">
                                 {trade.is_mtf && <span className="text-[10px] font-bold text-yellow-500 uppercase tracking-wider">MTF</span>}
+                                {trade.is_fno && <span className="text-[10px] font-bold text-orange-500 uppercase tracking-wider">FNO</span>}
                                 {trade.is_stage2 && (
                                   <span className="text-[10px] text-emerald-400 border border-emerald-500/30 bg-emerald-500/5 px-1.5 rounded uppercase font-medium">Stage 2</span>
                                 )}
