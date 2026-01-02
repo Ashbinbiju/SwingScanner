@@ -98,7 +98,7 @@ def validate_setup(row, historical_df):
         'stop_loss': stop_loss, 
         'target': target,
         'ltp': row['ltp'],
-        'close': close,
+        'close': row.get('close', close), # Use row close by default for accuracy
         'ema_9': ema_9,
         'ema_20': ema_20,
         'spread_pct': spread_pct,
