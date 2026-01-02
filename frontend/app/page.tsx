@@ -189,7 +189,7 @@ export default function Dashboard() {
               <TrendingUp className="w-6 h-6 text-indigo-400" />
             </div>
             <h1 className="text-xl font-bold text-white">
-              Swing FFD Scanner
+              Swing Scanner
             </h1>
           </div>
           <div className="flex items-center gap-4">
