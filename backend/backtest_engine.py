@@ -77,11 +77,14 @@ def validate_setup(row, historical_df):
     if not (close > ema_9):
          return {'valid': False, 'reason': 'Close below EMA 9'}
 
-    # 4. "Not too extended" -> Check Distance between 9 and 20
-    # Rule: abs(EMA9 - EMA20) / EMA20 < 1.5%
+    # 4. "Ideal Zone" Spread Rule (0.3% to 1.2%)
+    # Rule: abs(EMA9 - EMA20) / EMA20 
     spread_pct = abs(ema_9 - ema_20) / ema_20 * 100
     
-    if spread_pct > 1.5:
+    if spread_pct < 0.3:
+        return {'valid': False, 'reason': f'Too Squeezed ({spread_pct:.2f}%)'}
+    
+    if spread_pct > 1.2:
         return {'valid': False, 'reason': f'Overextended ({spread_pct:.2f}%)'}
 
     # 5. Stage 2 and MTF check (from Signal Row)
