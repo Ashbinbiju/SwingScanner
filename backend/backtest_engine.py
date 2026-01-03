@@ -104,9 +104,27 @@ def validate_setup(row, historical_df):
         'close': row.get('close', close), # Use row close by default for accuracy
         'ema_9': ema_9,
         'ema_20': ema_20,
+    # Calculate 'New' badge from appearance array
+    # Logic: If appearance[0] is True (Today) and appearance[1] is False (Yesterday), it's a fresh start.
+    appearance = row.get('appearance', [])
+    note = row.get('note', '')
+    
+    if isinstance(appearance, list) and len(appearance) > 1:
+        if appearance[0] and not appearance[1]:
+            note = 'New'
+
+    return {
+        'valid': True, 
+        'reason': 'Valid Setup',
+        'stop_loss': stop_loss, 
+        'target': target,
+        'ltp': row['ltp'],
+        'close': row.get('close', close), # Use row close by default for accuracy
+        'ema_9': ema_9,
+        'ema_20': ema_20,
         'spread_pct': spread_pct,
         'is_mtf': row.get('is_mtf', False), 
         'is_fno': row.get('is_fno', False),
         'is_stage2': row.get('is_stage2', False),
-        'note': row.get('note', '') # For 'New' badge
+        'note': note
     }
