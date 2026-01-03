@@ -61,9 +61,13 @@ def validate_setup(row, historical_df):
         return {'valid': False, 'reason': f"Date Error: {e}"}
 
     # Extract values
-    close = trigger_candle['close']
+    # IMPORTANT: Use the API close price (row['close']) if available, as it is the 'Breakout Candle'.
+    # Historical data might be 1 day behind or not fully updated if signal is fresh.
+    hist_close = trigger_candle['close']
     ema_9 = trigger_candle['EMA_9']
     ema_20 = trigger_candle['EMA_20']
+
+    close = row.get('close', hist_close)
     
     # 1. EMA 9 > EMA 20
     if not (ema_9 > ema_20):
