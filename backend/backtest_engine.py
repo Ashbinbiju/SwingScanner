@@ -77,14 +77,11 @@ def validate_setup(row, historical_df):
     if not (close > ema_9):
          return {'valid': False, 'reason': 'Close below EMA 9'}
 
-    # 4. "Ideal Zone" Spread Rule (0.3% to 1.2%)
+    # 4. "Ideal Zone" Spread Rule (Now corrected to <= 1.5% max)
     # Rule: abs(EMA9 - EMA20) / EMA20 
     spread_pct = abs(ema_9 - ema_20) / ema_20 * 100
     
-    if spread_pct < 0.3:
-        return {'valid': False, 'reason': f'Too Squeezed ({spread_pct:.2f}%)'}
-    
-    if spread_pct > 1.2:
+    if spread_pct > 1.5:
         return {'valid': False, 'reason': f'Overextended ({spread_pct:.2f}%)'}
 
     # 5. Stage 2 and MTF check (from Signal Row)
@@ -94,16 +91,12 @@ def validate_setup(row, historical_df):
     # Stop Loss Logic (from user prompt or calculate?)
     stop_loss = row.get('stop_loss', 0)
     target = row.get('next_target', 0)
-    
-    return {
-        'valid': True, 
-        'reason': 'Valid Setup',
-        'stop_loss': stop_loss, 
-        'target': target,
-        'ltp': row['ltp'],
-        'close': row.get('close', close), # Use row close by default for accuracy
-        'ema_9': ema_9,
-        'ema_20': ema_20,
+
+    # 6. Price Extension Filter: (Close - EMA20) / EMA20 <= 6%
+    price_extension_pct = ((close - ema_20) / ema_20) * 100
+    if price_extension_pct > 6:
+       return {'valid': False, 'reason': f'Price Extended ({price_extension_pct:.2f}%)'}
+
     # Calculate 'New' badge from appearance array
     # Logic: If appearance[0] is True (Today) and appearance[1] is False (Yesterday), it's a fresh start.
     appearance = row.get('appearance', [])
