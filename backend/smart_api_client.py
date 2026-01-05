@@ -112,7 +112,16 @@ class SmartApiClient:
         for attempt in range(5):
             try:
                 response = self.smartApi.getCandleData(params)
-                if response['status'] == True and response['data']:
+                
+                # Verify response is valid
+                if response is None:
+                    # Treat None as error
+                    return None, "API returned None"
+
+                # Safe access 'status'
+                status = response.get('status', False)
+                
+                if status == True and response.get('data'):
                     df = pd.DataFrame(response['data'], columns=['date', 'open', 'high', 'low', 'close', 'volume'])
                     df['date'] = pd.to_datetime(df['date'])
                     df['open'] = df['open'].astype(float)
@@ -126,16 +135,16 @@ class SmartApiClient:
                     error_code = response.get('errorcode', '')
                     # If Rate Limit or Server Error (AB1004), Retry
                     if error_code in ['AB1004', 'AB1005', 'AB2001']:
-                         print(f"Rate limit hit ({error_code}) for {symbol}, attempt {attempt+1}/5. Sleeping 5s...")
-                         time.sleep(5) # Fixed 5s wait for stability
-                         # Attempt Session Refresh on 3rd fail
+                         print(f"[{symbol}] Rate limit hit ({error_code}), attempt {attempt+1}/5. Sleeping 5s...")
+                         time.sleep(5) 
                          if attempt == 2:
-                             print("Refreshing Session...")
                              self.login()
                          continue
                     return None, f"API Error: {msg} ({error_code})"
             except Exception as e:
                 print(f"Exception for {symbol}: {e}")
+                import traceback
+                traceback.print_exc()
                 time.sleep(2)
                 if attempt == 4:
                      return None, f"Exception: {str(e)}"
