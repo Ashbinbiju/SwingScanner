@@ -116,12 +116,13 @@ async def run_backtest(payload: dict):
                             rej_row = result.copy()
                             rej_row['symbol'] = symbol
                             rejected_trades.append(rej_row)
+                            rejected_trades.append(rej_row)
                             # Emit rejected match
-                            yield json.dumps({"type": "match_rejected", "message": result['reason']}) + "\n"
+                            yield json.dumps({"type": "match_rejected", "message": result['reason'], "current_symbol": symbol}) + "\n"
                     else:
                         msg = f"No Data ({error_msg})"
                         rejected_trades.append({'symbol': symbol, 'reason': msg, 'valid': False})
-                        yield json.dumps({"type": "match_rejected", "message": msg}) + "\n"
+                        yield json.dumps({"type": "match_rejected", "message": msg, "current_symbol": symbol}) + "\n"
                 except Exception as e:
                      rejected_trades.append({'symbol': symbol, 'reason': f"Error: {str(e)}", 'valid': False})
 
