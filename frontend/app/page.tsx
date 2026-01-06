@@ -154,8 +154,9 @@ export default function Dashboard() {
     } else if (msg.type === 'error') {
       setLogs(prev => [...prev, `[ERROR] ${msg.message}`]);
     } else if (msg.type === 'complete') {
-      if (msg.valid_trades) {
-        // Ensure we have final list 
+      if (msg.valid_trades && msg.valid_trades.length > 0) {
+        // Backend now sorts the list by Quality. Replace our streaming list with the final sorted one.
+        setValidTrades(msg.valid_trades as Trade[]);
       }
       setLogs(prev => [...prev, `[COMPLETE] Finished.`]);
     }

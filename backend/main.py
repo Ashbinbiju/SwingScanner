@@ -133,7 +133,11 @@ async def run_backtest(payload: dict):
                 # To be safer with rate limits and responsiveness, we keep the sleep in the client.
                 await asyncio.sleep(0.01) 
 
-            # Final Result
+            # Final Result - Sort by Quality
+            # Priority 1: EMA Spread (Lower is better)
+            # Priority 2: Price Extension (Lower is better)
+            valid_trades.sort(key=lambda x: (x.get('spread_pct', 100), x.get('price_extension_pct', 100)))
+
             yield json.dumps({
                 "type": "complete", 
                 "valid_count": len(valid_trades),

@@ -120,6 +120,7 @@ def validate_setup(row, historical_df):
         'ema_9': ema_9,
         'ema_20': ema_20,
         'spread_pct': spread_pct,
+        'price_extension_pct': price_extension_pct,
         'is_mtf': row.get('is_mtf', False), 
         'is_fno': row.get('is_fno', False),
         'is_stage2': row.get('is_stage2', False),

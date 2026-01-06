@@ -132,7 +132,6 @@ class SmartApiClient:
                     return df, None
                 else:
                     msg = response.get('message', 'Unknown API Error')
-                    error_code = response.get('errorcode', '')
                     # If Rate Limit or Server Error (AB1004), Retry
                     if error_code in ['AB1004', 'AB1005', 'AB2001']:
                          print(f"[{symbol}] Rate limit hit ({error_code}), attempt {attempt+1}/5. Sleeping 5s...")
@@ -140,11 +139,23 @@ class SmartApiClient:
                          if attempt == 2:
                              self.login()
                          continue
+                    
+                    # Self-Healing: If Invalid Token, Refresh Scrip Master
+                    if "Invalid Token" in msg or error_code == "AG8001": # Common invalid token code
+                         print(f"[{symbol}] Invalid Token detected. Refreshing Scrip Master...")
+                         self._download_scrip_master()
+                         self.load_scrip_master()
+                         # Should we update the token variable?
+                         token = self.get_token(symbol)
+                         params["symboltoken"] = token
+                         time.sleep(2)
+                         continue
+
                     return None, f"API Error: {msg} ({error_code})"
             except Exception as e:
                 print(f"Exception for {symbol}: {e}")
-                import traceback
-                traceback.print_exc()
+                # import traceback
+                # traceback.print_exc()
                 time.sleep(2)
                 if attempt == 4:
                      return None, f"Exception: {str(e)}"
