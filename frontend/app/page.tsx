@@ -144,10 +144,12 @@ export default function Dashboard() {
       setCurrentSymbol(msg.current_symbol || '');
       setStatus(msg.message || '');
     } else if (msg.type === 'match_found') {
-      if (msg.data) {
-        setValidTrades(prev => [...prev, msg.data!]);
-        setLogs(prev => [...prev, `[MATCH] Found ${msg.data!.symbol}`]);
-      }
+      setValidTrades(prev => {
+        // Avoid duplicates
+        if (prev.find(t => t.symbol === msg.data!.symbol)) return prev;
+        return [...prev, msg.data!];
+      });
+      setLogs(prev => [...prev, `[MATCH] Found ${msg.data!.symbol} (Spread: ${msg.data!.spread_pct?.toFixed(2)}%, Ext: ${msg.data!.price_extension_pct?.toFixed(2)}%)`]);
     } else if (msg.type === 'match_rejected') {
       setRejectedTrades(prev => [...prev, { symbol: msg.current_symbol || 'Unknown', reason: msg.message || 'Rejected' }]);
       setLogs(prev => [...prev, `[REJECT] ${msg.current_symbol || 'Unknown'}: ${msg.message}`]);
