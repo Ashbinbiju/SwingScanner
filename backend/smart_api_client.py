@@ -132,6 +132,7 @@ class SmartApiClient:
                     return df, None
                 else:
                     msg = response.get('message', 'Unknown API Error')
+                    error_code = response.get('errorcode', '')
                     # If Rate Limit or Server Error (AB1004), Retry
                     if error_code in ['AB1004', 'AB1005', 'AB2001']:
                          print(f"[{symbol}] Rate limit hit ({error_code}), attempt {attempt+1}/5. Sleeping 5s...")
