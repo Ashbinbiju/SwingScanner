@@ -16,6 +16,7 @@ type Trade = {
   ema_9: number;
   ema_20: number;
   spread_pct?: number;
+  price_extension_pct?: number;
   is_mtf?: boolean;
   is_fno?: boolean;
   is_stage2?: boolean;
