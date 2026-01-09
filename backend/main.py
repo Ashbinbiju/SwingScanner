@@ -95,11 +95,13 @@ async def run_backtest(payload: dict):
                 try:
                     to_date_obj = datetime.strptime(row['date'], "%Y-%m-%dT%H:%M:%S.%fZ")
                     to_date_str = to_date_obj.strftime("%Y-%m-%d %H:%M")
-                    from_date_obj = to_date_obj - timedelta(days=60)
+                    # For Intraday (15min), we need fewer days but enough for EMA20 (~1-2 days).
+                    # Fetching 10 days is safe and fast.
+                    from_date_obj = to_date_obj - timedelta(days=10)
                     from_date_str = from_date_obj.strftime("%Y-%m-%d %H:%M")
                     
-                    # Fetch Data
-                    hist_df, error_msg = api_client.fetch_historical_data(symbol, from_date_str, to_date_str)
+                    # Fetch Data - Intraday 15min
+                    hist_df, error_msg = api_client.fetch_historical_data(symbol, from_date_str, to_date_str, interval='FIFTEEN_MINUTE')
                     
                     if hist_df is not None:
                         hist_df = calculate_indicators(hist_df)
